@@ -21,6 +21,8 @@ export class NewsletterService {
         }
 
         const articles = await this.newsService.getLatestArticles();
+
+        console.log("Fetched articles:", articles); // Log the fetched articles for debugging
         
         if (articles.length === 0) {
             throw new AppError("No articles found/something wrong with getting articles.", 503);

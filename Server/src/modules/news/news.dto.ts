@@ -5,9 +5,18 @@ export interface RawNewsArticleDto {
     source: string;
     publishedAt: Date;
     category: "AI" | "TECH";
+    
 }
 
-export interface processedNewsArticleDto extends RawNewsArticleDto {
+export interface ProcessedNewsArticleDto extends RawNewsArticleDto {
     summary: string;
     whyDoesThisMatterToMe: string;
+}
+
+
+
+export interface ExtractedNewsArticleDto
+    extends RawNewsArticleDto {
+
+    content: string;
 }
