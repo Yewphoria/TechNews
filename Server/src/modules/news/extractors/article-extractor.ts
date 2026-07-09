@@ -11,7 +11,7 @@ export class ArticleExtractor {
 
     try {
         const response = await fetch(article.url);
-
+        console.log(response);
         if (!response.ok) {
             return {
                 ...article,
@@ -29,17 +29,29 @@ export class ArticleExtractor {
             dom.window.document
         );
 
+        let imageUrl = dom.window.document.querySelector("meta[property='og:image']")?.getAttribute("content") || "";
+        //fallback
+        if(!imageUrl) {
+            imageUrl = dom.window.document
+            .querySelector("img")
+            ?.getAttribute("src") ?? "";
+        }
+
+
         const parsedArticle = reader.parse();
+        console.log("Parsed article:", parsedArticle);
 
         return {
             ...article,
             content: parsedArticle?.textContent?.trim() ?? "",
+            imageUrl: imageUrl,
         };
 
     } catch {
         return {
             ...article,
             content: "",
+            imageUrl: "",
         };
     }
 }

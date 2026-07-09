@@ -1,5 +1,6 @@
 // import { NewsProvider } from "./news.provider"; remove this if not using anymore
 import {AI_NEWS_SOURCES} from "./config/ai-news-source.config";
+import { TECH_NEWS_SOURCES } from "./config/tech-news-sources.config";
 import { RawNewsArticleDto } from "./news.dto";
 import { RssProvider } from "./providers/rss.provider";
 
@@ -12,9 +13,14 @@ export class NewsService {
         this.rssProvider = new RssProvider();
     }
 
-    public async getLatestArticles(): Promise<RawNewsArticleDto[]> {
+    public async getLatestArticles(
+        category?: "AI" | "TECH"
+    ): Promise<RawNewsArticleDto[]> {
+
+        const source = category === "AI" ? AI_NEWS_SOURCES : TECH_NEWS_SOURCES;
+
           const results = await Promise.allSettled(
-            AI_NEWS_SOURCES.map(source =>
+            source.map(source =>
                 this.rssProvider.fetchArticles(source)
             )
         );

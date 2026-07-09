@@ -14,7 +14,8 @@ import { config } from "../../config/config";
 
 
 //remove this after testing
-import { ExtractedNewsArticleDto } from "../news/news.dto";
+import { ExtractedNewsArticleDto, RawNewsArticleDto } from "../news/news.dto";
+import { ArticleEnrichmentService } from "../news/article-enrichment.service";
 
 const router = Router();
 
@@ -26,76 +27,86 @@ const newsService = new NewsService();
 
 const newsletterGenerator = new NewsletterGenerator();
 
-const newsletterService = new NewsletterService(newsletterRepository, newsService, newsletterGenerator); 
+//ai service
+const newAiService = new NewsAIService();
+//extract articles using ArticleExtractor
+const articleExtractor = new ArticleExtractor();
+//article enrichment service
+const articleEnrichmentService = new ArticleEnrichmentService(articleExtractor, newAiService);
+
+const newsletterService = new NewsletterService(newsletterRepository, newsService, newsletterGenerator, articleEnrichmentService); 
 const newsletterController = new NewsletterController(newsletterService);
 
-//testing ai
-const newAiService = new NewsAIService();
 
 
-router.get("/newsletter/today", asyncHandler(newsletterController.getTodayNewsletter));
+
+
+
+
+
+// ai tech news sources
+router.get("/newsletter/ai/today", asyncHandler(newsletterController.getTodayAINewsletter));
+
+// tech news sources
+router.get("/newsletter/tech/today", asyncHandler(newsletterController.getTodayTechNewsletter));
 
 
 //testing rss feed fetching
 router.get("/test", async (req, res) => {
-    const articles = await newsService.getLatestArticles();
+    try {
+        console.log("1. Fetching RSS...");
+        const rawArticles = await newsService.getLatestArticles();
+        console.log(`Fetched ${rawArticles.length} articles`);
 
-    res.json(articles);
-});
-
-router.get("/test-ai", async (req, res) => {
-
-    const articles: ExtractedNewsArticleDto[] = [
-        {
-            title: "OpenAI launches GPT-5.5",
-            description:
-                "OpenAI has announced GPT-5.5, a new reasoning-focused model with stronger coding capabilities.",
-
-            content: `
-OpenAI today officially released GPT-5.5.
-
-The model significantly improves coding, debugging and reasoning.
-
-Developers can access GPT-5.5 through the OpenAI API and ChatGPT.
-
-OpenAI says the model performs much better on software engineering benchmarks.
-            `,
-
-            url: "https://example.com/openai",
-            source: "OpenAI",
-            publishedAt: new Date(),
-            category: "AI",
-        },
-
-        {
-            title: "Anthropic releases Claude 5",
-            description:
-                "Anthropic introduced Claude 5 with improved long-context reasoning and coding assistance.",
-
-            content: `
-Anthropic announced Claude 5.
-
-The new model improves long-context understanding and software engineering workflows.
-
-Claude 5 is designed to help developers review code, understand repositories and automate repetitive tasks.
-
-The company also improved tool calling and reliability.
-            `,
-
-            url: "https://example.com/claude",
-            source: "Anthropic",
-            publishedAt: new Date(),
-            category: "AI",
-        },
-    ];
-
-    const result =
-        await newAiService.enrichArticle(
-            articles
+        console.log("2. Extracting...");
+        const extractedArticles = await Promise.all(
+            rawArticles.map(article =>
+                articleExtractor.extract(article)
+            )
         );
+        console.log("Extraction completed");
 
-    res.json(result);
+        console.log("3. Calling AI...");
+        const enrichedArticles =
+            await newAiService.enrichArticle(
+                extractedArticles
+            );
+        console.log("AI completed");
 
+        res.json(enrichedArticles);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
 });
+
+// router.get("/test-ai", async (req, res) => {
+
+//     const rawArticles: RawNewsArticleDto[] = [
+//         {
+//             "title": "Our approach to government and national security partnerships",
+//             "description": "Learn how OpenAI approaches government and national security partnerships, with principles for responsible AI use, democratic accountability, and public safety.",
+//             "source": "OpenAI",
+//             "url": "https://openai.com/index/government-national-security-partnerships",
+//             "publishedAt": new Date(),
+//             "category": "AI",
+//         }
+//     ];
+
+//     const extractedArticles = await Promise.all(
+//             rawArticles.map(article =>
+//                 articleExtractor.extract(article)
+//             )
+//         );
+
+//     const result =
+//         await newAiService.enrichArticle(
+//             extractedArticles
+//         );
+
+//     res.json(result);
+
+// });
 
 export default router;

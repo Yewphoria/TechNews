@@ -20,8 +20,20 @@ export class ArticleEnrichmentService {
 
         const extractedArticles: ExtractedNewsArticleDto[] =
             await Promise.all(
+
+
                 articles.map(article =>
-                    this.articleExtractor.extract(article)
+                {
+                    const shouldExtract = !article.description || article.description.trim().length < 300;
+                    
+                    if(!shouldExtract) {
+                        return {
+                            ...article,
+                            content: article.description,
+                        }
+                    }
+                    return this.articleExtractor.extract(article);
+                }
                 )
             );
 

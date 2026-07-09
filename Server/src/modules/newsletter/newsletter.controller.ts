@@ -8,14 +8,25 @@ export class NewsletterController {
         private readonly newsletterService: NewsletterService
     ) {}
 
-    public getTodayNewsletter = async (
+    public getTodayAINewsletter = async (
         req: Request,
         res: Response,
        
     ): Promise<void> => {
 
-            const newsletter = await this.newsletterService.getTodayNewsletter();
-            res.status(200).json(newsletter);
+            const newsletter = await this.newsletterService.getTodayNewsletter("AI");
+            res.json(newsletter);
+       
+    };
+
+     public getTodayTechNewsletter = async (
+        req: Request,
+        res: Response,
+       
+    ): Promise<void> => {
+
+            const newsletter = await this.newsletterService.getTodayNewsletter("TECH");
+            res.json(newsletter);
        
     };
 }

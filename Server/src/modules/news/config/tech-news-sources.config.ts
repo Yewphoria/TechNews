@@ -3,31 +3,25 @@ import { NewsSource } from "./news-source";
 export const TECH_NEWS_SOURCES: NewsSource[] = [
     {
         name: "Reuters",
-        rssUrl: "",
+        rssUrl: "https://feeds.reuters.com/reuters/technologyNews",
         category: "TECH",
         priority: 1,
     },
     {
         name: "TechCrunch",
-        rssUrl: "",
+        rssUrl: "https://techcrunch.com/feed/",
         category: "TECH",
         priority: 1,
     },
     {
-        name: "Ars Technica",
-        rssUrl: "",
-        category: "TECH",
-        priority: 2,
-    },
-    {
         name: "The Verge",
-        rssUrl: "",
+        rssUrl: "https://www.theverge.com/rss/index.xml",
         category: "TECH",
         priority: 2,
     },
     {
         name: "InfoQ",
-        rssUrl: "",
+        rssUrl: "https://feed.infoq.com/",
         category: "TECH",
         priority: 2,
     },

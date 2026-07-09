@@ -2,20 +2,20 @@ import { NewsSource } from "./news-source";
 
 export const AI_NEWS_SOURCES: NewsSource[] = [
     {
-        name: "OpenAI",
-        rssUrl: "https://openai.com/news/rss.xml",
+        name: "TechCrunch AI",
+        rssUrl: "https://techcrunch.com/category/artificial-intelligence/feed/",
         category: "AI",
         priority: 1,
     },
     {
-        name: "Claude Code",
-        rssUrl: "https://raw.githubusercontent.com/leontloveless/ai-rss-feeds/main/feeds/claude-code-releases.xml",
+        name: "The Decoder",
+        rssUrl: "https://the-decoder.com/feed/",
         category: "AI",
         priority: 1,
     },
     {
-        name: "Google AI",
-        rssUrl: "https://deepmind.google/blog/rss.xml",
+        name: "VentureBeat AI",
+        rssUrl: "https://venturebeat.com/ai/feed/",
         category: "AI",
         priority: 2,
     },

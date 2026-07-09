@@ -5,6 +5,7 @@ export interface RawNewsArticleDto {
     source: string;
     publishedAt: Date;
     category: "AI" | "TECH";
+    imageUrl?: string;
     
 }
 
